@@ -978,16 +978,17 @@ class NseOI:
         
              
         # PCR logic
+        try:
+            self.put_itm = round(put_sum_oi / call_sum_oi, 4) #OI_PCR logic
+        except ZeroDivisionError:
+            self.put_itm = 0
         
-        self.put_itm = round(put_sum_oi / call_sum_oi, 4) #OI_PCR logic
-        
-        self.call_itm = round(put_boundary_oi / call_boundary_oi,4) #CHOI_PCR logic
-        
-        
-         
-               
-        
-        
+        try:
+            self.call_itm = round(put_boundary_oi / call_boundary_oi,4) #CHOI_PCR logic
+
+        except ZeroDivisionError:
+            self.call_itm = 0
+
         if self.stop:
             return
 
