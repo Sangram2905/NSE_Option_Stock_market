@@ -16,6 +16,9 @@ Required :
   import sys
   import streamtologger
   import numpy
+  from datetime import datetime,date
+  import matplotlib.pyplot as plt
+  from nsepy import get_history
 
   # imports for graph
   from PIL import ImageTk,Image
