@@ -11,6 +11,7 @@ import sys
 import streamtologger
 import numpy
 
+
 # imports for graph
 from PIL import ImageTk,Image
 import matplotlib.pyplot as plt
@@ -20,7 +21,7 @@ import matplotlib.pyplot as plt
 # noinspection PyAttributeOutsideInit
 class NseOI:
     def __init__(self, window: Tk):
-        self.seconds = 375
+        self.seconds = 400
         self.stdout = sys.stdout
         self.stderr = sys.stderr
         self.previous_date = None
@@ -310,8 +311,7 @@ class NseOI:
         sheet_data = self.sheet.get_sheet_data()
         df_sd = pandas.DataFrame(sheet_data)
         #print (df_sd)
-        #plt.plot(sheet_data)
-        BN_NF_PLOT = df_sd.plot(x=0,y=4)
+        CHOI_PLOT = df_sd.plot(x=0,y=4)
         plt.xlabel('Time')
         plt.ylabel('CH_OI_Diff')
         plt.show()
@@ -320,13 +320,46 @@ class NseOI:
         sheet_data = self.sheet.get_sheet_data()
         df_sd = pandas.DataFrame(sheet_data)
         #print (df_sd)
-        #plt.plot(sheet_data)
-        BN_NF_PLOT = df_sd.plot(x=0,y=[7,8])
+        PCR_PLOT = df_sd.plot(x=0,y=[7,8])
         plt.xlabel('Time')
         plt.ylabel('OI_CHOI_PCR')
         #plt.ion()
-        plt.show()        
- 
+        plt.show() 
+        
+
+        
+    def graphs3(self,event=None):
+        time_data = self.time_count
+        long_data = self.long_count
+        short_data = self.short_count
+        ls_data = {'Time':time_data,'Long':long_data,'Short':short_data}
+        df_ls = pandas.DataFrame(ls_data)
+        print (df_ls)
+        LS_PLOT = df_ls.plot(x=0,y=[1,2])
+        plt.xlabel('Time')
+        plt.ylabel('Long_Short_Count')
+        plt.ion()
+        plt.show()
+        
+        # fig = plt.figure()
+        # ax1 = fig.add_subplot(1, 2, 1)
+        # ax2 = fig.add_subplot(1, 2, 2)
+        # ax1.plot(time_data, long_data, label='Long')
+        # ax2.plot(time_data, short_data, label='Short')
+        # ax1.set_xlabel('Time')
+        # ax1.set_ylabel('Long')
+        # ax1.set_title('Long_Count')
+        # ax1.legend()
+        # ax2.set_xlabel('Time')
+        # ax2.set_ylabel('Short')
+        # ax2.set_title('Short_Count')
+        # ax2.legend()
+        
+        # plt.show()
+    
+    def program1(self,event=None):
+        import NIFTY_BANKNIFTY_ML_Regration_BOT_Auto
+                
     def main_win(self):
         self.root = Tk()
         self.root.focus_force()
@@ -348,7 +381,9 @@ class NseOI:
         self.options.add_command(label="Logging: Off   (Ctrl+L)", command=self.log)
         self.options.add_separator()
         self.options.add_command(label="CHOI_Diff_Graph", command=self.graphs1)
-        self.options.add_command(label="OI_CHOI_PCR_Graph", command=self.graphs2)
+        self.options.add_command(label="OI_PCR_Graph", command=self.graphs2)
+        self.options.add_command(label="Long_Short_Graph", command=self.graphs3) 
+        self.options.add_command(label="Machine_Learning", command=self.program1) 
         #self.options.add_command(label="About   (Ctrl+M)", command=self.about)
         self.options.add_command(label="Quit   (Ctrl+Q)", command=self.close)
         menubar.add_cascade(label="Menu", menu=self.options)
@@ -514,6 +549,8 @@ class NseOI:
         short_list = []
         call_list =[]
         put_list = []
+
+        
         #int_put = 0  #if needed uncomment
         #int_call = 0
 
@@ -544,6 +581,7 @@ class NseOI:
     
         output_values = [self.str_current_time, self.points, self.call_sum, self.put_sum, self.difference,
                          self.call_boundary, self.put_boundary, self.call_itm, self.put_itm]
+        
         self.sheet.insert_row(values=output_values)
 
         last_row = self.sheet.get_total_rows() - 1
@@ -688,11 +726,34 @@ class NseOI:
         total_long = sum(long_list)+0
         total_short = sum(short_list)+0
         
-        new_total_long = total_long + self.old_total_long
-        new_total_short = total_short + self.old_total_short
-                
-        self.call_itm_val.config(text= new_total_long, bg=default)
-        self.put_itm_val.config(text= new_total_short, bg=default)
+        self.new_total_long = total_long + self.old_total_long
+        self.new_total_short = total_short + self.old_total_short
+        
+        
+        # List for graph 3 logic
+        if self.first_run :
+            self.time_count = []
+            self.long_count = []
+            self.short_count = []
+        
+        self.time_count = self.time_count
+        self.long_count = self.long_count
+        self.short_count = self.short_count
+ 
+            
+        self.time_count.append(self.str_current_time)
+        self.long_count.append(self.new_total_long)
+        self.short_count.append(self.new_total_short)
+        
+
+
+
+        
+        
+        ## Total long short count output
+        
+        self.call_itm_val.config(text= self.new_total_long, bg=default)
+        self.put_itm_val.config(text= self.new_total_short, bg=default)
         
         
         ## Price action logic
@@ -718,8 +779,8 @@ class NseOI:
         self.old_call_boundary = self.call_boundary
         self.old_call_itm = self.call_itm
         self.old_put_itm = self.put_itm
-        self.old_total_long = new_total_long
-        self.old_total_short = new_total_short
+        self.old_total_long = self.new_total_long
+        self.old_total_short = self.new_total_short
         self.old_total_call = new_total_call
         self.old_total_put = new_total_put
         self.old_difference = self.difference
@@ -738,7 +799,7 @@ class NseOI:
         try:
             df, current_time, self.underlying_stock, self.points = self.get_dataframe()
         except TypeError:
-            self.root.after((self.seconds * 1000), self.main)
+            self.root.after((self.seconds * 900), self.main)
             return
 
         self.str_current_time = current_time.split(" ")[1]
@@ -921,6 +982,8 @@ class NseOI:
         self.put_itm = round(put_sum_oi / call_sum_oi, 4) #OI_PCR logic
         
         self.call_itm = round(put_boundary_oi / call_boundary_oi,4) #CHOI_PCR logic
+        
+        
          
                
         
