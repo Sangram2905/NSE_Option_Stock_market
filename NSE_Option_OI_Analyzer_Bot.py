@@ -17,7 +17,6 @@ from PIL import ImageTk,Image
 import matplotlib.pyplot as plt
 
 
-
 # noinspection PyAttributeOutsideInit
 class NseOI:
     def __init__(self, window: Tk):
@@ -334,12 +333,13 @@ class NseOI:
         short_data = self.short_count
         ls_data = {'Time':time_data,'Long':long_data,'Short':short_data}
         df_ls = pandas.DataFrame(ls_data)
-        print (df_ls)
+        #print (df_ls)
         LS_PLOT = df_ls.plot(x=0,y=[1,2])
         plt.xlabel('Time')
         plt.ylabel('Long_Short_Count')
-        plt.ion()
+        #plt.ion()
         plt.show()
+
         
         # fig = plt.figure()
         # ax1 = fig.add_subplot(1, 2, 1)
@@ -356,9 +356,25 @@ class NseOI:
         # ax2.legend()
         
         # plt.show()
+
+    def graphs4(self,event=None):
+        time_data = self.time_count
+        price_data = self.price_count
+        ls_data = {'Time':time_data,'Price':price_data}
+        df_ls = pandas.DataFrame(ls_data)
+        #print (df_ls)
+        LS_PLOT = df_ls.plot(x=0,y=1)
+        plt.xlabel('Time')
+        plt.ylabel('Price_Count')
+        #plt.ion()
+        plt.show()
+
     
     def program1(self,event=None):
         import NIFTY_BANKNIFTY_ML_Regration_BOT_Auto
+        messagebox.showinfo(title="ML Program", message="Machine learning program exported the Data to csv files.")
+        
+              
                 
     def main_win(self):
         self.root = Tk()
@@ -378,12 +394,13 @@ class NseOI:
         self.options = Menu(menubar, tearoff=0)
         self.options.add_command(label="Stop   (Ctrl+X)", command=self.change_state)
         self.options.add_command(label="Export to CSV   (Ctrl+S)", command=self.export)
-        self.options.add_command(label="Logging: Off   (Ctrl+L)", command=self.log)
+        #self.options.add_command(label="Logging: Off   (Ctrl+L)", command=self.log)
         self.options.add_separator()
         self.options.add_command(label="CHOI_Diff_Graph", command=self.graphs1)
         self.options.add_command(label="OI_PCR_Graph", command=self.graphs2)
         self.options.add_command(label="Long_Short_Graph", command=self.graphs3) 
-        self.options.add_command(label="Machine_Learning", command=self.program1) 
+        self.options.add_command(label="Price_Action_Graph", command=self.graphs4) 
+        self.options.add_command(label="Machine_Learning", command=self.program1)
         #self.options.add_command(label="About   (Ctrl+M)", command=self.about)
         self.options.add_command(label="Quit   (Ctrl+Q)", command=self.close)
         menubar.add_cascade(label="Menu", menu=self.options)
@@ -735,20 +752,19 @@ class NseOI:
             self.time_count = []
             self.long_count = []
             self.short_count = []
+            self.price_count = []
         
         self.time_count = self.time_count
         self.long_count = self.long_count
         self.short_count = self.short_count
+        self.price_count = self.price_count
  
             
         self.time_count.append(self.str_current_time)
         self.long_count.append(self.new_total_long)
         self.short_count.append(self.new_total_short)
         
-
-
-
-        
+                
         
         ## Total long short count output
         
@@ -766,6 +782,7 @@ class NseOI:
         total_price_action = new_total_call + new_total_put
         ## put_exit column 
         self.put_exits_val.config(text= total_price_action , bg=default)
+        self.price_count.append(total_price_action)
 
        
 

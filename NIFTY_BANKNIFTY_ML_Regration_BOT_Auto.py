@@ -357,6 +357,8 @@ def bank_pcb():
     
     stockPCtobn = [14.95,2.58,0.66,1.33,28.39,19.48,0.85,4.37,16.31,0.46,1.06,9.56]
     stockValues = [Axis_value,Bandhan_value,Baroda_value,Federal_value,HDFC_value,ICICI_value,IDFC_value,IndusInd_value,Kotak_value,Punjab_value,RBL_value,SBI_value]
+    #Avrage P change in stock = [Axis_value = 3 ,Bandhan_value = 4.46 , Baroda_value = 3.5,Federal_value,HDFC_value = 2 ,ICICI_value =2.8 ,IDFC_value,IndusInd_value,Kotak_value = 2.7 ,Punjab_value,RBL_value,SBI_value]
+
     
     
     ## Need to add nifty 50 PCB as well
